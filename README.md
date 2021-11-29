@@ -3,9 +3,7 @@
 Vzorčni repozitorij za projekt pri predmetu APPR v študijskem letu 2021/22. 
 
 ## Tematika
-
-Izbrali si boste temo, s katero se bo vaš projekt ukvarjal.
-Tukaj boste napisali, kje ste dobili podatke, ter kakšen je vaš cilj.
+Za projektno nalogo bom analizirala spletno prodajo - koliko in kaj ljudje iz držav EU kupujejo prek spleta in to primerjala z BDP-jem po državah in stopnjo stopnjo izobrazbe v državah. Ogledala si bom tudi, kolikšen procent ljudi, ki živijo v mestih, je v zadnjih 3 mesecih kupovalo prek spleta in kolikšen procent takih je na ruralnih območjih.
 
 ## Program
 
