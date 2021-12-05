@@ -7,13 +7,13 @@ Za projektno nalogo bom analizirala spletno prodajo med leti 2004-2019 - koliko 
 V ta namen bom imela tri tabele.
 
 ### 1. tabela
-TTabela BDP v primerjavi s procentom ljudi, ki so v zadnjih treh mesecih spletno nakupovali. Atributi(stolpci) so leto(integer), država(character), predel(factor)(ali je z vasi ali mesta), delež ljudi (ki so v zadnjih 3 mesecih opravili spletni nakup) (double), realni BDP per capita(double) in delež ljudi s tretjo stopnjo izobrazbe po državi. Do tabele bom prišla iz dveh CSV datotek, ki sem ju dobila iz spletne strani www.eurostat.com, in ene html datoteke oziroma wiki razpredelnice (https://en.wikipedia.org/wiki/List_of_countries_by_tertiary_education_attainment).
+Tabela BDP v primerjavi s procentom ljudi, ki so v zadnjih treh mesecih spletno nakupovali. Atributi(stolpci) so leto(integer), država(character), predel(factor)(ali je z vasi ali mesta), delež ljudi (ki so v zadnjih 3 mesecih opravili spletni nakup) (double), realni BDP per capita(double) in delež ljudi s tretjo stopnjo izobrazbe po državi. Do tabele bom prišla iz dveh CSV datotek, ki sem ju dobila iz spletne strani www.eurostat.com, ene html datoteke oziroma wiki razpredelnice (https://en.wikipedia.org/wiki/List_of_countries_by_tertiary_education_attainment) in ene CSV datoteke iz spletne strani OECD, ki ima podatke za leta, ki manjkajo v wiki tabeli.
 
 ### 2. tabela
-Druga tabela bosta združeni dve CSV datoteki, kjer bodo stolpci prav tako leto(integer), država(character) nato pa dosežena stopnja izobrazbe(character), stolpec, ki bo vseboval delež ljudi te stopnje izobr., ki so v zadnjih 12 mesecih prek spleta naročili knjigo, revijo, časopis ali pripomoček za učenje(double), stolpec delež ljudi, ki so v zadnjih 12 mesecih kupili obleke ali športne pripomočke(double) ter stolpec, ki bo vseboval podatke o tem, kolikšen delež vseh nakupov so naredili pripadniki te stopnje izobrazbe(double).
+Druga tabela bosta združeni dve CSV datoteki, kjer bodo stolpci prav tako leto(integer), država(character) nato pa dosežena stopnja izobrazbe(character), stolpec, ki bo vseboval delež ljudi te stopnje izobr., ki so v zadnjih 12 mesecih prek spleta naročili knjigo, revijo, časopis ali pripomoček za učenje(double), stolpec delež ljudi, ki so v zadnjih 12 mesecih kupili obleke ali športne pripomočke(double) ter stolpec, ki bo vseboval podatke o tem, kolikšen delež vseh nakupov so naredili pripadniki te stopnje izobrazbe(double). Vse tabele so iz Eurostata.
 
 ### 3. tabela
-Zadnja bo 3. tabela, ki bo predelana CSV tabela in bo predstavljala nasploh kaj ljudje kupujejo in v kakšnih deležih. Stolpci bodo leto(integer), država(character), vrsta dobrine(character) in delež, ki ga predstavlja ta dobrina med vsemi spletnimi nakupi(double)
+Zadnja bo 3. tabela, ki bo predelana CSV tabela in bo predstavljala nasploh kaj ljudje kupujejo in v kakšnih deležih. Stolpci bodo leto(integer), država(character), vrsta dobrine(character) in delež, ki ga predstavlja ta dobrina med vsemi spletnimi nakupi(double). Vse tabele so iz Eurostata.
 
 ## Program
 
