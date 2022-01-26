@@ -6,6 +6,10 @@ library(readr)
 library(ggplot2)
 library(digest)
 library(mosaic)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(rgeos)
 
 # Funkcija uvozi.zemljevid(url, ime.zemljevida, pot.zemljevida="",
 #                          mapa="../zemljevidi", encoding=NULL, force=FALSE)
@@ -67,6 +71,47 @@ uvozi.zemljevid <- function(url, ime.zemljevida, pot.zemljevida="",
   
   return(zemljevid)
 }
+library(tmap)
+
+world <- ne_countries(scale = "medium", returnclass = "sf")
+Europe <- world[which(world$continent == "Europe"),]
+ggplot(Europe) +
+  geom_sf() +
+  coord_sf(xlim = c(-25,50), ylim = c(35,70), expand = FALSE) +
+  aes(fill = 'pink')
+
+lvls <-(Europe$sovereignt)
+primerjava <- data.frame(Country = lvls) %>% left_join(tabela1, by = "Country")
+manjkajoci <- primerjava[is.na(primerjava$BDPpc), ]
+
+
+df = data.frame(drzava = manjkajoci$Country, Country = c("Albania", 
+                                                         "Andorra",
+                                                         "Bosnia and Herzegovina",
+                                                         "Belarus",
+                                                         "Czechia",
+                                                         "Germany (until 1990 former territory of the FRG)",
+                                                         "Kosovo",
+                                                         "Liechtenstein",
+                                                         "Monaco",
+                                                         "Moldova",
+                                                         "North Macedonia",
+                                                         "Montenegro",
+                                                         "Russia",
+                                                         "San Marino",
+                                                         "Serbia",
+                                                         "Ukraine",
+                                                         "Vatican"))
+tabela1 <- tabela1 %>% left_join(df) %>% mutate(Country=ifelse(is.na(drzava), Country, drzava))
+tabela1 <- tabela1 %>% select(-drzava)
+n2 <- tabela1 %>% group_by(sovereignt = Country) %>% summarise(mean = mean(Value, na.rm = TRUE))
+m <- merge(Europe, n2)
+ggplot(m) +
+  geom_sf() +
+  coord_sf(xlim = c(-25,50), ylim = c(35,70), expand = FALSE) +
+  aes(fill = mean) +
+  scale_fill_gradient(low="yellow", high="magenta")
+
 
 # Primer uvoza zemljevida (slovenske občine)
 # obcine <- uvozi.zemljevid("http://baza.fmf.uni-lj.si/OB.zip", "OB",
