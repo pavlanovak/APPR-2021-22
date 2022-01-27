@@ -75,7 +75,7 @@ diagram.obrisi = function(k.obrisi) {
     theme_classic()
 }
 
-nakupi = tabela2 %>% select(
+nakupi = tabela2 %>% dplyr::select(
   Year, Country, Stopnja, Koliko_vseh_nakupov_je_opravila_ta_skupina
 ) %>%
   filter(
@@ -360,6 +360,261 @@ skupine = dendrogram %>%
   as.ordered()
 
 prostorski.diagram.skupine(drzave, skupine, k)
+
+podatki.ucni <- tabela1 %>%
+  filter(
+    Year == 2019
+  ) %>%
+  dplyr::select(-Year, - Area)
+podatki.ucni <- podatki.ucni[-c(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68), ]
+
+podatki.ucni <- podatki.ucni[(-c(32, 33, 34)),]
+g <- ggplot(podatki.ucni, aes(x=BDPpc, y=Value)) + geom_point()
+g + geom_smooth(method="lm")
+
+lin <- lm(data=podatki.ucni, Value ~ BDPpc + Education)
+lin
+napovedi <- predict(lin)
+
+kv <- lm(data=podatki.ucni, Value ~ Education + I(BDPpc^2))
+
+mls <- loess(data=podatki.ucni, Value ~ BDPpc + Education)
+
+
+sapply(list(lin, kv, mls), function(x) mean((x$residuals^2)))
+
+
+
+
+podatki.ucni <- transform(podatki.ucni, Education = as.numeric(as.character(Education)))
+k <- 5
+formula <- Value ~ BDPpc
+
+napaka.cv <- function(podatki, k, formula) {
+  n <- nrow(podatki)
+  r <- sample(1:n)
+  
+  razrez <- cut(1:n, k, labels = FALSE)
+  
+  razbitje <- split(r, razrez)
+  
+  pp.napovedi = rep(0, n)
+  for (i in 1:length(razbitje)) {
+    #Naučimo se modela na množici S/Si
+    model = podatki[ -razbitje[[i]], ] %>% lm(formula = formula)
+    #Naučen model uporabimo za napovedi na Si
+    pp.napovedi[ razbitje[[i]] ] = predict(object = model, newdata = podatki[ razbitje [[i]], ] )
+    
+  }
+  
+  #model so učni podatki in ostalo ( razbitje[[i]]) so testni podatki. 
+  
+  napaka <- mean((pp.napovedi - podatki$Value)^2)
+  return(napaka)
+}
+napaka.cv(podatki.ucni, 5, formula)
+
+formule <- c(Value ~ BDPpc,
+             Value ~ BDPpc + I(BDPpc^2),
+             Value ~ BDPpc + I(BDPpc^2) + I(BDPpc^3),
+             Value ~ BDPpc + I(BDPpc^2) + I(BDPpc^3) + I(BDPpc^4),
+             Value ~ BDPpc + I(BDPpc^2) + I(BDPpc^3) + I(BDPpc^4) +I(BDPpc^5))
+napake <- rep(0, 5)
+for (i in 1:5){
+  formula <- formule[[i]]
+  napaka <- napaka.cv(podatki.ucni, 5, formula) 
+  napake[i] <- napaka
+}
+which.min(napake)
+lin.model <- lm(data = podatki, formula = Value ~ BDPpc + I(BDPpc^2))
+
+
+napaka_regresije = function(podatki, model) {
+  podatki %>%
+    bind_cols(Value.hat = predict(model, podatki)) %>%
+    mutate(
+      izguba = (Value - Value.hat) ^ 2
+    ) %>%
+    dplyr::select(izguba) %>%
+    unlist() %>%
+    mean()
+}
+
+log.model = glm(
+  Value ~ BDPpc + I(BDPpc^2),
+  data = podatki.ucni, family = "binomial"
+)
+print(log.model)
+
+library(ranger)
+library(janitor)
+p.ucni <- janitor::clean_names(podatki.ucni)
+tabela2 <- janitor::clean_names(tabela2)
+set.seed(42)
+ng.reg.model = ranger(value ~ bd_ppc + I(bd_ppc^2), p.ucni)
+print(ng.reg.model)
+
+
+
+
+ng <- ranger(value ~ bd_ppc, p.ucni)
+
+ucenje = function(podatki, formula, algoritem) {
+  switch(
+    algoritem,
+    lin.reg = lm(formula, data = podatki),
+    ng = ranger(formula, data = podatki)
+  )
+}
+
+napovedi = function(podatki, model, algoritem) {
+  switch(
+    algoritem,
+    lin.reg = predict(model, podatki),
+    ng = predict(model, podatki)$predictions
+  )
+}
+
+napaka_regresije = function(podatki, model, algoritem) {
+  podatki %>%
+    bind_cols(value.hat = napovedi(podatki, model, algoritem)) %>%
+    mutate(
+      izguba = (value - value.hat) ^ 2
+    ) %>%
+    dplyr::select(izguba) %>%
+    unlist() %>%
+    mean()
+}
+
+napaka_razvrscanja = function(podatki, model, algoritem) {
+  podatki %>%
+    bind_cols(value.hat = napovedi(podatki, model, algoritem)) %>%
+    mutate(
+      izguba = (value != value.hat)
+    ) %>%
+    dplyr::select(izguba) %>%
+    unlist() %>%
+    mean()
+}
+
+
+
+
+
+lin.model = p.ucni %>% ucenje(value ~ bd_ppc, "lin.reg")
+p.ucni %>% napaka_regresije(lin.model, "lin.reg")
+
+set.seed(42)
+ng.reg.model = p.ucni %>% ucenje(value ~ bd_ppc, "ng")
+print(p.ucni %>% napaka_regresije(ng.reg.model, "ng"))
+
+k <- 5
+formula2 <- value ~ bd_ppc
+
+napaka.cv2 <- function(podatki, k, formula) {
+  n <- nrow(podatki)
+  r <- sample(1:n)
+  
+  razrez <- cut(1:n, k, labels = FALSE)
+  
+  razbitje <- split(r, razrez)
+  
+  pp.napovedi = rep(0, n)
+  for (i in 1:length(razbitje)) {
+    #Naučimo se modela na množici S/Si
+    model = podatki[ -razbitje[[i]], ] %>% ranger(formula = formula)
+    #Naučen model uporabimo za napovedi na Si
+    pp.napovedi[ razbitje[[i]] ] = predict(object = model, data = podatki[ razbitje [[i]], ])$predictions
+    
+  }
+  
+  #model so učni podatki in ostalo ( razbitje[[i]]) so testni podatki. 
+  
+  napaka <- mean((pp.napovedi - podatki$value)^2)
+  return(napaka)
+}
+napaka.cv(p.ucni, 5, formula2)
+
+formule <- c(Value ~ BDPpc,
+             Value ~ BDPpc + I(BDPpc^2),
+             Value ~ BDPpc + I(BDPpc^2) + I(BDPpc^3),
+             Value ~ BDPpc + I(BDPpc^2) + I(BDPpc^3) + I(BDPpc^4),
+             Value ~ BDPpc + I(BDPpc^2) + I(BDPpc^3) + I(BDPpc^4) +I(BDPpc^5))
+napake <- rep(0, 5)
+for (i in 1:5){
+  formula <- formule[[i]]
+  napaka <- napaka.cv(podatki.ucni, 5, formula) 
+  napake[i] <- napaka
+}
+which.min(napake)
+lin.model <- lm(data = podatki, formula = Value ~ BDPpc + I(BDPpc^2))
+
+library(iml)
+
+# Pripravimo le napovedne spremenljivke,
+# kot jih rabi funkcija Predictor$new
+
+X = p.ucni %>% dplyr::select(bd_ppc, education)
+
+# Funkciji Predictor$new moramo povedati
+# kako napovedujemo z modelom naključnih gozdov 
+
+pfun = function(model, newdata) {
+  predict(model, data = newdata, predict.all = FALSE)$predictions
+}
+
+# pripravimo najprej objekt razreda Prediktor
+# prvi argument funkcije je model,
+# drugi in tretji so podatki o napovednih
+# in ciljni spremenljivki,
+# zadnji pa funkcija za napovedovanje
+
+reg.pred = Predictor$new(
+  ng.reg.model,
+  data = X, y = p.ucni$value,
+  predict.fun = pfun
+)
+
+# na koncu uporabimo funkcijo FeatureImp$new
+reg.moci = FeatureImp$new(reg.pred, loss = "mse")
+
+plot(reg.moci)
+
+
+slo <- tabela1 %>% filter(Country == "Slovenia")
+slo <- slo[-c(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32),]
+slo <- slo[-c(1, 2),]
+
+data(EuStockMarkets)
+EuStockMarkets
+CAC <- slo[,4]
+CACs <- slo[,c(1,4)]
+CACs %>% ggplot() +
+  geom_line(
+    mapping = aes(x = Year, y = Value),
+    color = "pink"
+  )
+library(ranger)
+Lag <- function(x, n){
+  (c(rep(NA, n), x)[1 : length(x)] )
+}
+naredi.df <- function(x){data.frame(Value = x,
+                                    Value1 = Lag(x, 1),
+                                    Value2 = Lag(x, 2) ,
+                                    Value3 = Lag(x, 3),
+                                    Value4 = Lag(x, 4)
+)
+}
+df <- naredi.df(CAC$Value)
+model.bi = ranger(Value ~ Value1 + Value2 + Value3 + Value4, data=df %>% drop_na())
+n <- nrow(df)
+for (i in 1:5){
+  df <- naredi.df(c(df$Value, NA))
+  napoved = predict(model.bi,  data = df[n + i, ] )$predictions
+  df[n+i, 1] = napoved
+}
+napovedi = df[(n+1):(n+5), 1]
+
 
 
 
