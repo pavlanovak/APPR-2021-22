@@ -20,13 +20,22 @@ source("lib/libraries.r", encoding="UTF-8")
 
 ## Izbira teme
 
-Izbrala sem si temo **Spletno nakupovanje v Evropi**.
+Izbrala sem si temo **Spletno nakupovanje v Evropi**. Preučevala sem, kaj so ljudje kupovali, katera skupina ljudi največ nakupuje in kaj vpliva na delež nakupov v neki državi. Gledala sem podatke po vsej Evropi med leti 2004 in 2019.
+
+<center>
+![](slike/onlineshopping.jpg)
+***
 
 ## Obdelava, uvoz in čiščenje podatkov
 
 ```{r uvoz}
 source("uvoz/uvoz.r", encoding="UTF-8")
 ```
+Podatke, potrebne za analizo, sem predstavila v readme datoteki, a da na kratko ponovim, potrebovala sem tabele iz Eurostata, Wikipedije in pa tabelo iz spletne strani OECD. Potrebne podatke sem združila v 3 tabele, ki so mi pomagale pri naprednem analiziranju.
+Tabela1 predstavlja deleže ljudi, ki so v zadnjih 3 mesecih spletno nakupovali, BDP per capita in delež ljudi, ki ima doseženo 3. stopnjo izobrazbe. vse to je predstavljeno po letih, predelu, kjer živijo in po državah.
+Tabela2 predstavlja ljudi, razvrščene po pridobljeni stopnji izobrazbe, kaj kupujejo in kolikšen delež vsega kupljenega je kupila ta skupina prebivalstva. To je razdeljeno po državah in letih.
+Tabela3 predstavlja kaj ljudje nasploh kupujejo in v kakšnih deležih, razvrščeno po letih in državi.
+
 
 ***
 
@@ -36,6 +45,96 @@ source("uvoz/uvoz.r", encoding="UTF-8")
 source("vizualizacija/vizualizacija.r", encoding="UTF-8")
 ```
 
+```{r graf1, echo=FALSE, fig.align='center'}
+graf1
+```
+
+Graf prikazuje, kako se speminja delež ljudi, ki je v zadnjih 3 mesecih opravilo spletni nakup, glede na BDP. Barva nam predstavlja kakšen delež prebivalstva ima doseženo tretjo stopnjo izobrazbe. Opazimo lahko, da se z višjim BDPjem in višjim odstotkom izobraženega prebivalstva pomikamo višje, torej države z večjim BDPjem na prebivalca in višjo stopnjo izobraženih opravijo več spletnih nakupov.
+
+```{r graf2, echo=FALSE, fig.align='center'}
+graf2
+```
+
+Pri tem grafu se osredotočimo na to, v katerem predelu posamezniki živijo. Vidimo, da se rdeče pikice nabirajo bolj v zgornji polovici grafa kot modre, to nam pove, da ljudje iz mest naročujejo več. Prav tako vidimo, da se z večjim deležem tretje stopnje izobrazbe povečuje tudi delež ljudi, ki spletno nakupuje in to velja za posameznike v ruralnih območjih in v mestih.
+
+```{r graf3, echo=FALSE, fig.align='center'}
+graf3
+```
+Opazujemo kako se po državah razlikuje število ljudi, ki spletno nakupuje.
+
+
+```{r graf4, echo=FALSE, fig.align='center'}
+graf4
+```
+Tu vidimo, katere države kupujejo največ prek spleta in kako delež iz leta v leto raste.
+```{r graf5, echo=FALSE, fig.align='center'}
+graf5
+```
+Ogledamo si še kako se po državah razlikuje delež ljudi, ki nakupujejo prek spleta glede na predel.
+
+```{r graf6, echo=FALSE, fig.align='center'}
+graf6
+```
+Za posamezno državo si ogledamo še, kako se spreminjajo nakupovalne navade za posameznike z različnimi stopnjami izobrazbe.
+
+```{r graf7, echo=FALSE, fig.align='center'}
+graf7
+```
+Preko povprečnega BDP per capita primerjamo države in delež spletnega nakupovanje. Temnejše obarvani vodoravni stolpci sežejo dlje,
+
+```{r graf8, echo=FALSE, fig.align='center'}
+graf8
+```
+Vidimo, da temnejši stolpci sežejo dlje, večji delež višja stopnje izobrazbe torej res pomeni več spletnega nakupovanja.
+
+```{r}
+narisi.graf = function(drzava) {
+  ddd = tabela3_c %>% dplyr::filter(year == 2019, country == drzava) %>% pivot_longer(c(3, 4, 5, 6, 7), names_to = 'type', values_to =  "value")
+dddd = ggplot(data = ttt, mapping = aes(x = country, y = value, fill = type)) +
+  geom_bar(width = 1, stat = 'identity') + coord_polar("y", start=0) + xlab('') + ylab('') + ggtitle("Kaj kupujejo ljudje v posamezni državi?") + scale_fill_discrete(name = "Vrsta kupljenega izdelka", labels = c("Knjige, revije, učenje,...", "Obleke, šport", "Filmi, glasba", "Gospodinjski pripomočki", "Potovanja, hoteli,..."))
+
+  dddd
+}
+```
+```{r echo=FALSE}
+titlePanel("Izberi državo!")
+column(4,
+    inputPanel(
+    radioButtons(
+      "drzava",
+      label = "Mera razdalje med skupinami:",
+      choices = c(
+        "Slovenia",
+        "United Kingdom",
+        "Italy",
+        "Austria",
+        "Sweden",
+        "France",
+        "Serbia",
+        "Spain"
+      ),
+      selected = "Slovenia"
+    )
+))
+
+column(8,
+  renderPlot({
+      narisi.graf(input$drzava)
+  })
+)
+```
+
+
+Oglejmo si še 2 tortna diagrama, ki prikazujeta, da ljudje s 3. stopnjo izobrazbe v Združenem Kraljestvu (država vzeta kot primer) kupujejo več knjig kot ljudje brez ali z nizko izobrazbo.
+
+```{r graf10, echo=FALSE, fig.align='center'}
+graf10
+```
+
+
+```{r graf11, echo=FALSE, fig.align='center'}
+graf11
+```
 ***
 
 ## Napredna analiza podatkov
@@ -43,6 +142,28 @@ source("vizualizacija/vizualizacija.r", encoding="UTF-8")
 ```{r analiza}
 source("analiza/analiza.r", encoding="UTF-8")
 ```
+Države sem poskusila razporediti glede na to, kako podobne so si njihove nakupovalne navade. Osredotočila sem se na to, kje posamezne skupine posameznikov po izobrazbi kupujejo približno isto veliko. Po metodi k-tih voditeljev in hierarhičnem razvrščanju s pomočjo kolen (podrobnejša razlaga kako točno je v fileu analiza.r) pridemo do tega, da je optimalno število skupin 2, lahko pa je tudi 4. Države sem pobarvala po skupinah in jih označila na grafih evrope. Prikazan je le končen rezultat, vmesni so v kodi v analiza.r.
+
+```{r skup, echo=FALSE, fig.align='center'}
+skup
+```
+Države razporejene v 3 skupine.
+
+Oglejmo si še zemljevida skupin (2 ali 4)
+
+```{r z1, echo=FALSE, fig.align='center'}
+z1
+```
+```{r z2, echo=FALSE, fig.align='center'}
+z2
+```
+
+Poskusila sem napredno analizirati podatke s pomočjo naključnih gozdov in linearne regresije, opazovala sem odstotek spletnih nakupov glede na BDP per capita.
+Nakoncu pa sem poskusila še napovedati odstotek spletnega nakupovanja v Sloveniji glede na prejšnja leta za naslednjih 5 let. Dobila sem vrednosti okoli 43 odstotkov, kar se glede na podatke za prejšnja leta zdi kar realno.
+```{r nap, echo=FALSE, fig.align='center'}
+nap
+```
+
 
 ***
 
