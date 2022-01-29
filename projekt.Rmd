@@ -135,6 +135,11 @@ graf10
 ```{r graf11, echo=FALSE, fig.align='center'}
 graf11
 ```
+Tu pa si oglejmo katera država v povprečju največ spletno nakupuje še na zemljevidu.
+```{r z3, echo=FALSE, fig.align='center'}
+z3
+```
+
 ***
 
 ## Napredna analiza podatkov

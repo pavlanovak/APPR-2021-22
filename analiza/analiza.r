@@ -167,7 +167,7 @@ diagram.kolena(r)
 diagram.skupine = function(podatki, oznake, skupine, k) {
   podatki = podatki %>%
     bind_cols(skupine) %>%
-    rename(skupina = ...4)
+    dplyr::rename(skupina = ...4)
   
   d = podatki %>%
     ggplot(
@@ -208,7 +208,7 @@ r.km = nakupi[, -1] %>% obrisi(hc = FALSE)
 diagram.obrisi(r.hc)
 diagram.obrisi(r.km)
 
-#Optimalno število skupin je torej 2 ali 4.
+#Optimalno število skupin je torej 2 ali 4/5.
 
 drzave.x.y =
   as_tibble(razdalje %>% cmdscale(k = 2)) %>%
@@ -236,7 +236,7 @@ skupine = nakupi[, -1] %>%
   kmeans(centers = 4) %>%
   getElement("cluster") %>%
   as.ordered()
-diagram.skupine(drzave.x.y, drzave.x.y$drzava, skupine, 2)
+skup <- diagram.skupine(drzave.x.y, drzave.x.y$drzava, skupine, 2)
 
 
 svet.sp = readOGR("zemljevidi/TM_WORLD_BORDERS-0.3.shp", "TM_WORLD_BORDERS-0.3")
@@ -348,7 +348,7 @@ skupine = nakupi[, -1] %>%
   getElement("cluster") %>%
   as.ordered()
 
-prostorski.diagram.skupine(drzave, skupine, 2)
+z1 <- prostorski.diagram.skupine(drzave, skupine, 2)
 
 k = dendrogram %>%
   hc.kolena %>%
@@ -359,7 +359,7 @@ skupine = dendrogram %>%
   cutree(k = 4) %>%
   as.ordered()
 
-prostorski.diagram.skupine(drzave, skupine, k)
+z2<- prostorski.diagram.skupine(drzave, skupine, k)
 
 podatki.ucni <- tabela1 %>%
   filter(
@@ -449,7 +449,6 @@ print(log.model)
 library(ranger)
 library(janitor)
 p.ucni <- janitor::clean_names(podatki.ucni)
-tabela2 <- janitor::clean_names(tabela2)
 set.seed(42)
 ng.reg.model = ranger(value ~ bd_ppc + I(bd_ppc^2), p.ucni)
 print(ng.reg.model)
@@ -585,8 +584,7 @@ slo <- tabela1 %>% filter(Country == "Slovenia")
 slo <- slo[-c(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32),]
 slo <- slo[-c(1, 2),]
 
-data(EuStockMarkets)
-EuStockMarkets
+
 CAC <- slo[,4]
 CACs <- slo[,c(1,4)]
 CACs %>% ggplot() +
@@ -607,13 +605,21 @@ naredi.df <- function(x){data.frame(Value = x,
 }
 df <- naredi.df(CAC$Value)
 model.bi = ranger(Value ~ Value1 + Value2 + Value3 + Value4, data=df %>% drop_na())
-n <- nrow(df)
+lllll <- nrow(df)
 for (i in 1:5){
   df <- naredi.df(c(df$Value, NA))
-  napoved = predict(model.bi,  data = df[n + i, ] )$predictions
-  df[n+i, 1] = napoved
+  napoved = predict(model.bi,  data = df[lllll + i, ] )$predictions
+  df[lllll+i, 1] = napoved
 }
-napovedi = df[(n+1):(n+5), 1]
+napovedi = df[c(15, 16, 17, 18, 19), 1]
+CACs2 <- CACs
+CACs2[c(15, 16, 17, 18, 19),2] = napovedi
+CACs2[c(15, 16, 17, 18, 19),1] = c(2020, 2021, 2022, 2023, 2024)
+
+nap <- ggplot(CACs2) + geom_point(aes(x = Year, y = Value, colour = Year > 2019)) +
+  scale_colour_manual(name = 'Napovedi', values = setNames(c('magenta','blue'),c(T, F))) +
+  xlab('Leto') + ylab('Odstotek ljudi, ki spletno nakupuje')
+
 
 
 
