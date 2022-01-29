@@ -93,3 +93,9 @@ tabela2 <- left_join(kaj_so, koliko_vsega, by = c("Country", "Year", "Stopnja"))
 
 tabela3 <- read_csv("podatki/kaj_kupujejo1.csv", na=":", col_select=c(-4,-5,-7), 
                                    locale=locale(encoding="Windows-1250")) %>% pivot_wider(names_from = "INDIC_IS", values_from = "Value") %>% rename(Year = TIME) %>% rename(Country = GEO)
+
+
+tabela2_c <- janitor::clean_names(tabela2)
+tabela3_c <- janitor::clean_names(tabela3)
+
+

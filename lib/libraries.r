@@ -18,6 +18,7 @@ library(raster)
 library(rgeos)
 library(maptools)
 library(mapproj)
+library(janitor)
 options(gsubfn.engine="R")
 
 # Uvozimo funkcije za pobiranje in uvoz zemljevida.

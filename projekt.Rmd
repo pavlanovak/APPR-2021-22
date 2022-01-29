@@ -1,7 +1,7 @@
 ---
 title: "Poročilo pri predmetu Analiza podatkov s programom R"
-author: "Študent FMF"
-output:
+author: "Pavla Novak"
+output: 
   html_document: default
   pdf_document:
     includes:
@@ -20,7 +20,7 @@ source("lib/libraries.r", encoding="UTF-8")
 
 ## Izbira teme
 
-***
+Izbrala sem si temo **Spletno nakupovanje v Evropi**.
 
 ## Obdelava, uvoz in čiščenje podatkov
 

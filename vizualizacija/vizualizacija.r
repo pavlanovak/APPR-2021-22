@@ -44,3 +44,32 @@ ggplot(data = tabela2, mapping = aes(x = Year, y = Koliko_vseh_nakupov_je_opravi
 ggplot(data=n, aes(x=Country, y=mean, fill = BDP_mean)) +
   geom_bar(stat="identity") + coord_flip() + scale_fill_gradient(low="pink", high="magenta")
 
+tabela3[,3] <- as.integer(as.character(unlist(tabela3[,3])))
+tabela3[,4] <- as.integer(unlist(tabela3[,4]))
+tabela3[,5] <- as.integer(unlist(tabela3[,5]))
+tabela3[,6] <- as.integer(unlist(tabela3[,6]))
+tabela3[,7] <- as.integer(unlist(tabela3[,7]))
+
+ttt <- tabela3 %>% dplyr::filter(year == 2019, country == 'Slovenia') %>% pivot_longer(c(3, 4, 5, 6, 7), names_to = 'type', values_to =  "value")
+ggplot(data = ttt, mapping = aes(x = country, y = value, fill = type)) +
+  geom_bar(width = 1, stat = 'identity') + coord_polar("y", start=0) 
+
+tabela2[,4] <- as.integer(unlist(tabela2[,4]))
+tabela2[,5] <- as.integer(unlist(tabela2[,5]))
+fff1 <- tabela2 %>% dplyr::filter(year == 2019, country == 'United Kingdom', stopnja == 'Individuals with high formal education') %>% pivot_longer(c(4, 5), names_to = 'type', values_to = 'value')
+ggplot(data = fff1, mapping = aes(x = country, y = value, fill = type)) +
+  geom_bar(width = 1, stat = 'identity') + coord_polar("y", start=0) 
+
+
+fff2 <- tabela2 %>% dplyr::filter(year == 2019, country == 'United Kingdom', stopnja == 'Individuals with no or low formal education') %>% pivot_longer(c(4, 5), names_to = 'type', values_to = 'value')
+ggplot(data = fff2, mapping = aes(x = country, y = value, fill = type)) +
+  geom_bar(width = 1, stat = 'identity') + coord_polar("y", start=0) 
+
+
+
+
+
+
+
+
+
