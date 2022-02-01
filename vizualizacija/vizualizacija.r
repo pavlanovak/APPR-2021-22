@@ -113,7 +113,7 @@ tabela1 <- tabela1 %>% left_join(df) %>% dplyr::mutate(Country=ifelse(is.na(drza
 tabela1 <- tabela1 %>% dplyr::select(-drzava)
 n2 <- tabela1 %>% dplyr::group_by(sovereignt = Country) %>% dplyr::summarise(mean = mean(Value, na.rm = TRUE))
 m <- merge(Europe, n2)
-ggplot(m) +
+z3 <- ggplot(m) +
   geom_sf() +
   coord_sf(xlim = c(-25,50), ylim = c(35,70), expand = FALSE) +
   aes(fill = mean) +
