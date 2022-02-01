@@ -238,12 +238,17 @@ skupine = nakupi[, -1] %>%
   as.ordered()
 skup <- diagram.skupine(drzave.x.y, drzave.x.y$drzava, skupine, 2)
 
-
-svet.sp = readOGR("zemljevidi/TM_WORLD_BORDERS-0.3.shp", "TM_WORLD_BORDERS-0.3")
+download.file(url='https://kt.ijs.si/~ljupco/lectures/appr/zemljevidi/svet/TM_WORLD_BORDERS-0.3.shp',
+              destfile='TM_WORLD_BORDERS-0.3.shp', method='curl')
+download.file(url='https://kt.ijs.si/~ljupco/lectures/appr/zemljevidi/svet/TM_WORLD_BORDERS-0.3.dbf',
+              destfile='TM_WORLD_BORDERS-0.3.dbf', method='curl')
+download.file(url='https://kt.ijs.si/~ljupco/lectures/appr/zemljevidi/svet/TM_WORLD_BORDERS-0.3.shx',
+              destfile='TM_WORLD_BORDERS-0.3.shx', method='curl')
+svet.sp <- readOGR(getwd(), "TM_WORLD_BORDERS-0.3")
 svet.sp = gBuffer(svet.sp, byid = TRUE, width = 0)
 
 svet.map = svet.sp %>% spTransform(CRS("+proj=longlat +datum=WGS84"))
-svet.centroidi = read_csv("zemljevidi/drzave-centroidi.csv")
+svet.centroidi = read_csv("podatki/drzave-centroidi.csv")
 evropske.drzave = tibble(
   drzava = c(
     "Albania", "Andorra", "Armenia",
