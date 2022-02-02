@@ -93,7 +93,7 @@ Vidimo, da temnejši stolpci sežejo dlje, večji delež višja stopnje izobrazb
 ```{r}
 narisi.graf = function(drzava) {
   ddd = tabela3_c %>% dplyr::filter(year == 2019, country == drzava) %>% pivot_longer(c(3, 4, 5, 6, 7), names_to = 'type', values_to =  "value")
-dddd = ggplot(data = ttt, mapping = aes(x = country, y = value, fill = type)) +
+dddd = ggplot(data = ddd, mapping = aes(x = country, y = value, fill = type)) +
   geom_bar(width = 1, stat = 'identity') + coord_polar("y", start=0) + xlab('') + ylab('') + ggtitle("Kaj kupujejo ljudje v posamezni državi?") + scale_fill_discrete(name = "Vrsta kupljenega izdelka", labels = c("Knjige, revije, učenje,...", "Obleke, šport", "Filmi, glasba", "Gospodinjski pripomočki", "Potovanja, hoteli,..."))
 
   dddd
