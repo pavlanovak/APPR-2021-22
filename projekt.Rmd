@@ -32,9 +32,12 @@ Izbrala sem si temo **Spletno nakupovanje v Evropi**. Preučevala sem, kaj so lj
 source("uvoz/uvoz.r", encoding="UTF-8")
 ```
 Podatke, potrebne za analizo, sem predstavila v readme datoteki, a da na kratko ponovim, potrebovala sem tabele iz Eurostata, Wikipedije in pa tabelo iz spletne strani OECD. Potrebne podatke sem združila v 3 tabele, ki so mi pomagale pri naprednem analiziranju.
-Tabela1 predstavlja deleže ljudi, ki so v zadnjih 3 mesecih spletno nakupovali, BDP per capita in delež ljudi, ki ima doseženo 3. stopnjo izobrazbe. vse to je predstavljeno po letih, predelu, kjer živijo in po državah.
-Tabela2 predstavlja ljudi, razvrščene po pridobljeni stopnji izobrazbe, kaj kupujejo in kolikšen delež vsega kupljenega je kupila ta skupina prebivalstva. To je razdeljeno po državah in letih.
-Tabela3 predstavlja kaj ljudje nasploh kupujejo in v kakšnih deležih, razvrščeno po letih in državi.
+  
+**Tabela1** predstavlja deleže ljudi, ki so v zadnjih 3 mesecih spletno nakupovali, BDP per capita in delež ljudi, ki ima doseženo 3. stopnjo izobrazbe. vse to je predstavljeno po letih, predelu, kjer živijo in po državah.
+  
+**Tabela2** predstavlja ljudi, razvrščene po pridobljeni stopnji izobrazbe, kaj kupujejo in kolikšen delež vsega kupljenega je kupila ta skupina prebivalstva. To je razdeljeno po državah in letih.
+  
+**Tabela3** predstavlja, kaj ljudje nasploh kupujejo in v kakšnih deležih, razvrščeno po letih in državi.
 
 
 ***
@@ -49,30 +52,30 @@ source("vizualizacija/vizualizacija.r", encoding="UTF-8")
 graf1
 ```
 
-Graf prikazuje, kako se speminja delež ljudi, ki je v zadnjih 3 mesecih opravilo spletni nakup, glede na BDP. Barva nam predstavlja kakšen delež prebivalstva ima doseženo tretjo stopnjo izobrazbe. Opazimo lahko, da se z višjim BDPjem in višjim odstotkom izobraženega prebivalstva pomikamo višje, torej države z večjim BDPjem na prebivalca in višjo stopnjo izobraženih opravijo več spletnih nakupov.
+Graf prikazuje, kako se speminja delež ljudi, ki je v zadnjih 3 mesecih opravilo spletni nakup, glede na BDP. Barva nam predstavlja, kakšen delež prebivalstva ima doseženo tretjo stopnjo izobrazbe. Opazimo lahko, da se z višjim BDPjem in višjim odstotkom izobraženega prebivalstva pomikamo višje, torej države z večjim BDPjem na prebivalca in višjo stopnjo izobraženih opravijo več spletnih nakupov.
 
-```{r graf2, echo=FALSE, fig.align='center'}
+```{r graf2, echo=FALSE, fig.align='center', fig.width = 12}
 graf2
 ```
 
 Pri tem grafu se osredotočimo na to, v katerem predelu posamezniki živijo. Vidimo, da se rdeče pikice nabirajo bolj v zgornji polovici grafa kot modre, to nam pove, da ljudje iz mest naročujejo več. Prav tako vidimo, da se z večjim deležem tretje stopnje izobrazbe povečuje tudi delež ljudi, ki spletno nakupuje in to velja za posameznike v ruralnih območjih in v mestih.
 
-```{r graf3, echo=FALSE, fig.align='center'}
+```{r graf3, echo=FALSE, fig.align='center', fig.width = 12}
 graf3
 ```
 Opazujemo kako se po državah razlikuje število ljudi, ki spletno nakupuje.
 
 
-```{r graf4, echo=FALSE, fig.align='center'}
+```{r graf4, echo=FALSE, fig.align='center', fig.width=12}
 graf4
 ```
 Tu vidimo, katere države kupujejo največ prek spleta in kako delež iz leta v leto raste.
-```{r graf5, echo=FALSE, fig.align='center'}
+```{r graf5, echo=FALSE, fig.align='center', fig.height = 10, fig.width= 12}
 graf5
 ```
-Ogledamo si še kako se po državah razlikuje delež ljudi, ki nakupujejo prek spleta glede na predel.
+Ogledamo si še, kako se po državah razlikuje delež ljudi, ki nakupujejo prek spleta glede na predel.
 
-```{r graf6, echo=FALSE, fig.align='center'}
+```{r graf6, echo=FALSE, fig.align='center', fig.height = 10, fig.width = 12}
 graf6
 ```
 Za posamezno državo si ogledamo še, kako se spreminjajo nakupovalne navade za posameznike z različnimi stopnjami izobrazbe.
@@ -98,7 +101,7 @@ dddd = ggplot(data = ttt, mapping = aes(x = country, y = value, fill = type)) +
 ```
 ```{r echo=FALSE}
 titlePanel("Izberi državo!")
-column(4,
+column(3,
     inputPanel(
     radioButtons(
       "drzava",
@@ -117,7 +120,7 @@ column(4,
     )
 ))
 
-column(8,
+column(9,
   renderPlot({
       narisi.graf(input$drzava)
   })
@@ -127,12 +130,12 @@ column(8,
 
 Oglejmo si še 2 tortna diagrama, ki prikazujeta, da ljudje s 3. stopnjo izobrazbe v Združenem Kraljestvu (država vzeta kot primer) kupujejo več knjig kot ljudje brez ali z nizko izobrazbo.
 
-```{r graf10, echo=FALSE, fig.align='center'}
+```{r graf10, echo=FALSE, fig.align='center', fig.width = 12}
 graf10
 ```
 
 
-```{r graf11, echo=FALSE, fig.align='center'}
+```{r graf11, echo=FALSE, fig.align='center', fig.width = 12}
 graf11
 ```
 Tu pa si oglejmo katera država v povprečju največ spletno nakupuje še na zemljevidu.

@@ -93,7 +93,7 @@ nakupi[38, 1] = 'Kosovo'
 drzave = nakupi[, 1] %>% unlist()
 razdalje = nakupi[, -1] %>% dist()
 dendrogram = razdalje %>% hclust(method = "ward.D")
-plot(
+dendrogramcek <- plot(
   dendrogram,
   labels = drzave,
   ylab = "višina",
@@ -247,7 +247,6 @@ download.file(url='https://kt.ijs.si/~ljupco/lectures/appr/zemljevidi/svet/TM_WO
 svet.sp <- readOGR(getwd(), "TM_WORLD_BORDERS-0.3")
 svet.sp = gBuffer(svet.sp, byid = TRUE, width = 0)
 
-svet.map = svet.sp %>% spTransform(CRS("+proj=longlat +datum=WGS84"))
 svet.centroidi = read_csv("podatki/drzave-centroidi.csv")
 evropske.drzave = tibble(
   drzava = c(
@@ -431,7 +430,7 @@ for (i in 1:5){
   napake[i] <- napaka
 }
 which.min(napake)
-lin.model <- lm(data = podatki, formula = Value ~ BDPpc + I(BDPpc^2))
+lin.model <- lm(data = podatki.ucni, formula = Value ~ BDPpc + I(BDPpc^2))
 
 
 napaka_regresije = function(podatki, model) {
@@ -445,23 +444,12 @@ napaka_regresije = function(podatki, model) {
     mean()
 }
 
-log.model = glm(
-  Value ~ BDPpc + I(BDPpc^2),
-  data = podatki.ucni, family = "binomial"
-)
-print(log.model)
+
 
 library(ranger)
 library(janitor)
 p.ucni <- janitor::clean_names(podatki.ucni)
 set.seed(42)
-ng.reg.model = ranger(value ~ bd_ppc + I(bd_ppc^2), p.ucni)
-print(ng.reg.model)
-
-
-
-
-ng <- ranger(value ~ bd_ppc, p.ucni)
 
 ucenje = function(podatki, formula, algoritem) {
   switch(
@@ -551,7 +539,7 @@ for (i in 1:5){
   napake[i] <- napaka
 }
 which.min(napake)
-lin.model <- lm(data = podatki, formula = Value ~ BDPpc + I(BDPpc^2))
+lin.model <- lm(data = podatki.ucni, formula = Value ~ BDPpc + I(BDPpc^2))
 
 library(iml)
 
