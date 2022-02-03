@@ -20,7 +20,7 @@ source("lib/libraries.r", encoding="UTF-8")
 
 ## Izbira teme
 
-Izbrala sem si temo **Spletno nakupovanje v Evropi**. Preučevala sem, kaj so ljudje kupovali, katera skupina ljudi največ nakupuje in kaj vpliva na delež nakupov v neki državi. Gledala sem podatke po vsej Evropi med leti 2004 in 2019.
+Izbrala sem si temo **spletno nakupovanje v Evropi**. Preučevala sem, kaj so ljudje kupovali, katera skupina ljudi največ nakupuje in kaj vpliva na delež nakupov v neki državi. Gledala sem podatke po vsej Evropi med leti 2004 in 2019.
 
 <center>
 ![](slike/onlineshopping.jpg)
