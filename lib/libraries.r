@@ -19,6 +19,7 @@ library(rgeos)
 library(maptools)
 library(mapproj)
 library(janitor)
+library(gridExtra)
 options(gsubfn.engine="R")
 
 # Uvozimo funkcije za pobiranje in uvoz zemljevida.
