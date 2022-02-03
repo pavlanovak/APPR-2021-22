@@ -93,13 +93,14 @@ nakupi[38, 1] = 'Kosovo'
 drzave = nakupi[, 1] %>% unlist()
 razdalje = nakupi[, -1] %>% dist()
 dendrogram = razdalje %>% hclust(method = "ward.D")
-dendrogramcek <- plot(
-  dendrogram,
-  labels = drzave,
-  ylab = "višina",
-  main = NULL
-)
-
+#dendrogramcek <- plot(
+#  dendrogram,
+#  labels = drzave,
+#  ylab = "višina",
+#  main = NULL
+#)
+#Zgornjo kodo, ki nariše dendrogram, sem zakomentirala, saj se mi je dendrogramcek kljub temu, da sem ga shranila 
+#pod spremenljivko in ga ne poklicala v poročilu, še zmeraj prikazoval.
 
 hc.kolena = function(dendrogram, od = 1, do = NULL, eps = 0.5) {
   # število primerov in nastavitev parametra do

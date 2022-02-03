@@ -1,7 +1,7 @@
 # 3. faza: Vizualizacija podatkov
 #Delež ljudi glede na BDP, ki je v zadnjih 3 mesecih opravilo spletni nakup
-graf1 <- ggplot(tabela1) + aes(x = BDPpc, y = Value, color = Education) + geom_point() + xlab("BDP na prebivalca") + ylab("Delež ljudi, ki je v zadnjih 3 mesecih opravil spletni nakup") + ggtitle("Delež ljudi glede na BDP na prebivalca, ki je opravil spletni nakup v zadnjih 3 mesecih")
-"Delež ljudi glede na delež ljudi s tretjo st izobrazbe, ki je opravilo spletni nakup v zadnjih 3 mesecih"
+graf1 <- ggplot(tabela1) + aes(x = BDPpc, y = Value, color = Education) + geom_point() + xlab("BDP na prebivalca") + ylab("Delež ljudi, ki je v zadnjih 3 mesecih opravil spletni nakup") + ggtitle("Delež ljudi glede na BDP na prebivalca, ki je opravil spletni nakup v zadnjih 3 mesecih") + labs(color = "Odstotek prebivalstva s 3. stopnjo izobrazbe")
+"Delež ljudi glede na delež ljudi s tretjo st izobrazbe, ki je opravil spletni nakup v zadnjih 3 mesecih"
 graf2 <- ggplot(tabela1) + aes(x = Education, y = Value, color = Area ) + geom_point() + xlab("Delež ljudi s tretjo stopnjo izobrazbe") + ylab("Delež ljudi, ki je v zadnjih 3 mesecih opravil spletni nakup") + ggtitle("Delež ljudi glede na delež ljudi s tretjo stopnjo izobrazbe, ki je opravilo spletni nakup v zadnjih 3 mesecih") + scale_color_discrete(name="Predel", labels=c("Živeči v mestih", "Živeči na ruralnih območjih"))
 
 
@@ -17,7 +17,7 @@ graf3 <- tabela1 %>%
     mapping = aes(group= Country, x = Country, y = Value)
   ) +
   geom_boxplot() + 
-  xlab("Država") + ylab("Kolikšen delež ljudi je v zadnjih 3 mesecih kupil nekaj preko spleta")
+  xlab("Država") + ylab("Kolikšen delež ljudi je v zadnjih 3 mesecih kupil nekaj preko spleta") + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 
 
 n <- tabela1 %>% dplyr::group_by(Country) %>% dplyr::summarise(mean = mean(Value, na.rm = TRUE))
@@ -35,11 +35,11 @@ graf5 <- ggplot(data = tabela1, aes(x = Year, y = Value, color = Area)) +
 
 graf6 <- ggplot(data = tabela2, mapping = aes(x = Year, y = Koliko_vseh_nakupov_je_opravila_ta_skupina, color = Stopnja)) +
   geom_line() +
-  facet_wrap(facets =  vars(Country)) + xlab('Leto') + ylab("Kolikšen delež vseh nakupov je opravila določena skupin") + ggtitle("Spreminjanje odstotka ljudi po državah in doseženi izobrazbi, ki so nakupovali prek spleta, čez leta") + scale_color_discrete(name="Dosežena stopnja izobrazbe", labels=c("Posamezniki z visoko formalno izobrazbo", "Posamezniki s srednjo formalno izobrazbo", "Posamezniki brez ali z nizko izobrazbo", "Študenti"))
+  facet_wrap(facets =  vars(Country)) + xlab('Leto') + ylab("Kolikšen delež vseh nakupov je opravila določena skupina") + ggtitle("Spreminjanje odstotka ljudi po državah in doseženi izobrazbi, ki so nakupovali prek spleta, čez leta") + scale_color_discrete(name="Dosežena stopnja izobrazbe", labels=c("Posamezniki z visoko formalno izobrazbo", "Posamezniki s srednjo formalno izobrazbo", "Posamezniki brez ali z nizko izobrazbo", "Študenti"))
 
 
 graf7 <- ggplot(data=n, aes(x=Country, y=mean, fill = BDP_mean)) +
-  geom_bar(stat="identity") + coord_flip() + scale_fill_gradient(low="pink", high="magenta")+ xlab('povprečen odstotek ljudi, ki nakupuje prek spleta v tej državi') + ylab('Država') + labs(fill = "Povprečni BDP per capita") + ggtitle("Odstotek ljudi, ki nakupuje prek spleta glede na BDP")
+  geom_bar(stat="identity") + coord_flip() + scale_fill_gradient(low="pink", high="magenta")+ xlab('Država') + ylab('Povprečen odstotek ljudi, ki kupuje prek spleta v tej državi') + labs(fill = "Povprečni BDP per capita") + ggtitle("Odstotek ljudi, ki nakupuje prek spleta glede na BDP")
 
 
 spr <- tabela1
@@ -49,7 +49,7 @@ izobrazba <- spr %>% dplyr::group_by(Country) %>% dplyr::summarise(Edmean = mean
 
 n$Edmean <- izobrazba$Edmean
 graf8 <- ggplot(data=n, aes(x=Country, y=mean, fill = Edmean)) +
-  geom_bar(stat="identity") + coord_flip() + scale_fill_gradient(low="yellow", high="red")+ xlab('povprečen odstotek ljudi, ki nakupuje prek spleta v tej državi') + ylab('Država') + labs(fill = "Povprečen delež ljudi s tretjo stopnjo izobrazbe") + ggtitle("Odstotek ljudi, ki nakupuje prek spleta glede na odstotek ljudi z doseženo tretjo stopnjo izobrazbe")
+  geom_bar(stat="identity") + coord_flip() + scale_fill_gradient(low="yellow", high="red")+ ylab('Povprečen odstotek ljudi, ki nakupuje prek spleta v tej državi') + xlab('Država') + labs(fill = "Povprečen delež ljudi s tretjo stopnjo izobrazbe") + ggtitle("Odstotek ljudi, ki nakupuje prek spleta glede na odstotek ljudi z doseženo tretjo stopnjo izobrazbe")
 
 
 
@@ -67,13 +67,15 @@ tabela2_c[,4] <- as.integer(unlist(tabela2_c[,4]))
 tabela2_c[,5] <- as.integer(unlist(tabela2_c[,5]))
 fff1 <- tabela2_c %>% dplyr::filter(year == 2019, country == 'United Kingdom', stopnja == 'Individuals with high formal education') %>% pivot_longer(c(4, 5), names_to = 'type', values_to = 'value')
 graf10 <- ggplot(data = fff1, mapping = aes(x = country, y = value, fill = type)) +
-  geom_bar(width = 1, stat = 'identity') + coord_polar("y", start=0) + ggtitle("Kaj kupujejo ljudje z doseženo visoko izobrazbo v posamezni državi?") + xlab('') + ylab('') + scale_fill_discrete(name = 'Vrsta kupljenega izdelka', labels = c('Knjige, revije, učenje,...', "Obleke, šport"))
-
+  geom_bar(width = 1, stat = 'identity') + coord_polar("y", start=0) + ggtitle("Kaj kupujejo ljudje\nz doseženo visoko izobrazbo\nv Združenem kraljestvu?") + xlab('') + ylab('') + scale_fill_discrete(name = 'Vrsta kupljenega izdelka', labels = c('Knjige, revije, učenje,...', "Obleke, šport")) +
+  theme(legend.position = "none", axis.text = element_blank(), axis.ticks = element_blank(), panel.grid = element_blank())
 
 fff2 <- tabela2_c %>% dplyr::filter(year == 2019, country == 'United Kingdom', stopnja == 'Individuals with no or low formal education') %>% pivot_longer(c(4, 5), names_to = 'type', values_to = 'value')
 graf11 <- ggplot(data = fff2, mapping = aes(x = country, y = value, fill = type)) +
-  geom_bar(width = 1, stat = 'identity') + coord_polar("y", start=0) + ggtitle("Kaj kupujejo ljudje brez izobrazbe ali nizko izobrazbo v posamezni državi?") + xlab('') + ylab('') + scale_fill_discrete(name = 'Vrsta kupljenega izdelka', labels = c('Knjige, revije, učenje,...', "Obleke, šport"))
-
+  geom_bar(width = 1, stat = 'identity') + coord_polar("y", start=0) + ggtitle("Kaj kupujejo ljudje \nbrez izobrazbe ali \nnizko izobrazbo\nv Združenem kraljestvu?") + xlab('') + ylab('') + scale_fill_discrete(name = 'Vrsta kupljenega izdelka', labels = c('Knjige, revije, učenje,...', "Obleke, šport")) +
+  theme(axis.text = element_blank(),
+      axis.ticks = element_blank(),
+      panel.grid  = element_blank())
 
 
 
